@@ -47,60 +47,63 @@
       overflow: hidden;
     }
 
-    .panel-bg {
+    /* ── Ken Burns Carousel ─────────────────────────────────
+       Full-bleed photo carousel. 8 slides, no controls.
+       Each slide: 7s display + 1.5s crossfade = 8.5s interval.
+       Total cycle: ~68 seconds before repeat.
+       Ken Burns: scale 1.0→1.08 + subtle directional pan.
+    ─────────────────────────────────────────────────────── */
+    .carousel-slide {
       position: absolute;
       inset: 0;
       width: 100%;
       height: 100%;
       object-fit: cover;
       object-position: center center;
-      display: block;
-    }
-
-    /* ── ARM + PHONE IMAGE ZONE ─────────────────────────── */
-    .phone-zone {
-      position: absolute;
-      left: -6%;             /* arm bleeds off left edge */
-      bottom: -6%;           /* arm exits at bottom edge — no floating elbow */
-      transform: rotate(4deg);
-      width: 64%;            /* larger — pulled-back table perspective */
-      aspect-ratio: 800 / 1028;
-    }
-
-    /* arm+phone image */
-    .phone-img {
-      width: 100%;
-      height: 100%;
-      object-fit: contain;
-      display: block;
-    }
-
-    /* ── Phone screen carousel overlay ──────────────────────
-       Measured from arm_phone.png (800×1028px, transparent PNG):
-         Screen center:  65% left, 38.6% top of image
-         Screen size:    ~25% W × ~45% H of container
-         Screen rotation: ~15° clockwise (matching phone tilt in photo)
-         Border-radius:  8% (phone screen corner rounding)
-    ─────────────────────────────────────────────────────── */
-    .phone-screen {
-      position: absolute;
-      left: 65%;
-      top: 38.6%;
-      width: 25%;
-      height: 45%;
-      transform: translate(-50%, -50%) rotate(15deg);
-      overflow: hidden;
-      border-radius: 8%;
-    }
-
-    .slide {
-      position: absolute;
-      inset: 0;
       opacity: 0;
-      transition: opacity 0.8s ease-in-out;
+      z-index: 1;
+      transition: opacity 1.5s ease-in-out;
+      transform-origin: center center;
+      will-change: transform, opacity;
     }
-    .slide.slide-active {
+
+    .carousel-slide.active {
       opacity: 1;
+      z-index: 2;
+    }
+
+    /* ── Ken Burns keyframes — 8 directional variants ── */
+    @keyframes kb-right-down {
+      from { transform: scale(1.0)  translate(0%,     0%);   }
+      to   { transform: scale(1.08) translate(1.5%,   1%);   }
+    }
+    @keyframes kb-left-up {
+      from { transform: scale(1.0)  translate(0%,     0%);   }
+      to   { transform: scale(1.08) translate(-1.5%,  -1%);  }
+    }
+    @keyframes kb-right-up {
+      from { transform: scale(1.0)  translate(0%,     0%);   }
+      to   { transform: scale(1.08) translate(1.5%,   -1%);  }
+    }
+    @keyframes kb-left-down {
+      from { transform: scale(1.0)  translate(0%,     0%);   }
+      to   { transform: scale(1.08) translate(-1.5%,  1%);   }
+    }
+    @keyframes kb-up-right {
+      from { transform: scale(1.0)  translate(0%,     0%);   }
+      to   { transform: scale(1.08) translate(1%,     -1.5%);}
+    }
+    @keyframes kb-down-left {
+      from { transform: scale(1.0)  translate(0%,     0%);   }
+      to   { transform: scale(1.08) translate(-1%,    1.5%); }
+    }
+    @keyframes kb-up-left {
+      from { transform: scale(1.0)  translate(0%,     0%);   }
+      to   { transform: scale(1.08) translate(-1%,    -1.5%);}
+    }
+    @keyframes kb-down-right {
+      from { transform: scale(1.0)  translate(0%,     0%);   }
+      to   { transform: scale(1.08) translate(1%,     1.5%); }
     }
 
     /* ── RIGHT PANEL ────────────────────── */
@@ -204,14 +207,6 @@
         height: auto;
       }
 
-      .phone-zone {
-        left: -4%;
-        bottom: -4%;
-        transform: rotate(4deg);
-        width: 72%;
-        aspect-ratio: 800 / 1028;
-      }
-
       .panel-right {
         padding: 3rem 2rem;
       }
@@ -227,26 +222,19 @@
 <div class="page">
 
   <!-- ══════════════════════════════════════
-       LEFT — table setting photo + arm+phone
+       LEFT — Ken Burns photo carousel
+       Slides 1–8, auto-advance, no controls
   ══════════════════════════════════════ -->
   <div class="panel-left">
 
-    <img class="panel-bg"
-         src="table_setting.png"
-         alt="Elegant table setting">
-
-    <!-- PHONE ZONE — arm_phone.png (800×1028, transparent PNG) -->
-    <div class="phone-zone">
-      <img src="arm_phone.png" class="phone-img" alt="">
-      <!-- Carousel overlaid on white screen area.
-           3 placeholder slides — swap .style background for real <img> tags when Dave provides photos.
-           Auto-advances every 4s with crossfade. -->
-      <div class="phone-screen">
-        <div class="slide slide-active" style="background:#5E82A0"></div>
-        <div class="slide" style="background:#F0EDE7"></div>
-        <div class="slide" style="background:#8B4030"></div>
-      </div>
-    </div>
+    <img class="carousel-slide" src="table_setting.png"       alt="Table setting"      data-kb="kb-right-down">
+    <img class="carousel-slide" src="beach_umbrella.jpg"      alt="Beach umbrella"     data-kb="kb-left-up">
+    <img class="carousel-slide" src="biking.jpg"              alt="Biking"             data-kb="kb-right-up">
+    <img class="carousel-slide" src="cooking.jpg"             alt="Cooking"            data-kb="kb-left-down">
+    <img class="carousel-slide" src="dave_cinque.jpg"         alt="Cinque Terre"       data-kb="kb-up-right">
+    <img class="carousel-slide" src="firenze.jpg"             alt="Firenze"            data-kb="kb-down-left">
+    <img class="carousel-slide" src="music_man.jpg"           alt="Music"              data-kb="kb-up-left">
+    <img class="carousel-slide" src="the_david_shadow.jpg"    alt="The David shadow"   data-kb="kb-down-right">
 
   </div>
 
@@ -314,18 +302,48 @@
 
 
 <script>
-  /* Carousel — crossfade every 4 seconds
-     To swap in real photos: replace each <div class="slide" style="background:...">
-     with <img class="slide" src="your-photo.jpg" style="object-fit:cover;width:100%;height:100%">
+  /* Ken Burns carousel — 8 slides, auto-advance, no controls, vanilla JS
+     Display: 7s per slide  |  Crossfade: 1.5s  |  Interval: 8.5s  |  Cycle: ~68s
   */
   (function () {
-    var slides = document.querySelectorAll('.phone-screen .slide');
-    var current = 0;
+    var slides   = document.querySelectorAll('.carousel-slide');
+    var INTERVAL = 8500;   /* ms between transitions: 7000 display + 1500 fade */
+    var FADE     = 1500;   /* ms — must match CSS transition duration            */
+    var ANIM_DUR = (INTERVAL / 1000) + 's';
+    var current  = 0;
+
+    function activate(index) {
+      var slide = slides[index];
+      var anim  = slide.getAttribute('data-kb');
+      /* Force animation restart on each activation */
+      slide.style.animation = 'none';
+      slide.getBoundingClientRect(); /* reflow */
+      slide.style.animation = anim + ' ' + ANIM_DUR + ' ease-in-out forwards';
+      slide.style.zIndex = '2';
+      slide.classList.add('active');
+    }
+
+    function deactivate(index) {
+      slides[index].classList.remove('active');
+      slides[index].style.zIndex = '1';
+    }
+
+    /* Start first slide immediately */
+    activate(0);
+
     setInterval(function () {
-      slides[current].classList.remove('slide-active');
-      current = (current + 1) % slides.length;
-      slides[current].classList.add('slide-active');
-    }, 4000);
+      var next    = (current + 1) % slides.length;
+      var outgoing = current;
+
+      activate(next);
+
+      /* Remove outgoing after crossfade completes */
+      setTimeout(function () {
+        deactivate(outgoing);
+      }, FADE);
+
+      current = next;
+    }, INTERVAL);
   })();
 </script>
 </body>
